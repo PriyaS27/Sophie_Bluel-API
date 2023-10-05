@@ -1,6 +1,8 @@
 # Portfolio-architecte-sophie-bluel
 
-Code du projet 6 d'intégrateur web.
+OpenClassRooms : formation "Intégrateur Developpeur Web"
+
+Projet 6 : "Créez une page web dynamique avec JavaScript."
 
 ## Information pour le lancer le code
 
