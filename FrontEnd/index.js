@@ -5,37 +5,21 @@ const apiCategoriesUrl = 'http://localhost:5678/api/categories';
 const galleryContainer = document.querySelector('.gallery');
 // Select the category menu
 const categoryMenu = document.querySelector('.categories');
-
-
-
-
 // Function to fetch data from the API
 async function fetchData(apiUrl) {
   try {
     // Make an API request
     const response = await fetch(apiUrl);
-
-
-
-
     if (!response.ok) {
       // Throw an error for an unsuccessful response
       throw new Error('Failed to fetch data');
     }
-
-
-
-
     // Parse JSON data from the response
     const data = await response.json();
     if (!data || !Array.isArray(data)) {
       // Throw an error if the data is not found or not in the expected format
       throw new Error('Data not found');
     }
-
-
-
-
     // Return the fetched data
     return data;
   } catch (error) {
@@ -44,32 +28,16 @@ async function fetchData(apiUrl) {
     throw error;
   }
 }
-
-
-
-
 // Function to fetch categories from the API
 async function fetchCategories(apiUrl) {
   try {
     // Make an API request to fetch categories
     const response = await fetch(apiUrl);
-
-
-
-
     if (!response.ok) {
       // Throw an error for an unsuccessful response
       throw new Error('Failed to fetch categories');
     }
-
-
-
-
     const data = await response.json();
-
-
-
-
     if (!data || !Array.isArray(data)) {
       throw Error('Categories not found');
     }
@@ -81,10 +49,6 @@ async function fetchCategories(apiUrl) {
     throw error;
   }
 }
-
-
-
-
 // Function to populate the category menu
 function populateCategoryMenu(categoriesData) {
   // Create an option for showing all works
@@ -95,10 +59,6 @@ function populateCategoryMenu(categoriesData) {
   liAll.dataset.categoryId = 'all';
   // Append the "All" category option to the category menu
   categoryMenu.appendChild(liAll);
-
-
-
-
  // Populate the menu with categories from the data
   categoriesData.forEach(category => {
  // Reusing the same variable name for simplicity
@@ -110,10 +70,6 @@ function populateCategoryMenu(categoriesData) {
     // Append the category option to the category menu
     categoryMenu.appendChild(liCategory);
   });
-
-
-
-
   // Add an event listener to the category menu to handle filtering
   categoryMenu.addEventListener('click', handleCategoryFilter);
 }
@@ -132,48 +88,38 @@ function populateCategoryMenu(categoriesData) {
      img.alt = project.title;
      // Set a data attribute for the project ID
      img.setAttribute('data-id', project.id);
- 
+     console.log('Project ID:', project.id);
      const figcaption = document.createElement('figcaption');
      // Set the title in the caption
      figcaption.textContent = project.title;
- 
      figure.appendChild(img);// Append the image to the figure element
      figure.appendChild(figcaption);// Append the caption to the figure element
      gallery.appendChild(figure);// Append the figure to the gallery
    });
  }
-
-
-
-
  // Define an async function to fetch data and populate the gallery
 async function fetchAndPopulateGallery() {
     try {
       // Fetch works data
       const projects = await fetchData(apiUrl);
+      console.log('Fetched projects:', projects);
       // Create Category Filters
       const categories = await fetchCategories(apiCategoriesUrl);
+      console.log('Fetched categories:', categories);
       populateGallery(projects);
- 
       // Create a category menu for filtering projects
       const categoriesMenu = document.querySelector('.categories');
       const liAll = document.createElement('li');
       liAll.textContent = 'All';
       liAll.setAttribute('data-category', 'all');
       categoriesMenu.appendChild(liAll);
- 
       // Create list items for each category
       categories.forEach((category) => {
         const li = document.createElement('li');
         li.textContent = category.name;
         li.setAttribute('data-category', category.id);
         categoriesMenu.appendChild(li);
- 
     });
-
-
-
-
     // Add click event listeners to category items for filtering
     const categoryItems = document.querySelectorAll('.categories li');
     categoryItems.forEach((item) => {
@@ -195,19 +141,17 @@ async function fetchAndPopulateGallery() {
     console.error('Error initializing the app:', error);
   }
 }
-
-
-
-
 // Call the async function to start the process
 fetchAndPopulateGallery();
+
+
 let selectedFile;
   // Function to handle file input change
  function handleFileInputChange(event) {
    // Get the file input element
     const fileInput = event.target;
    // Get the first selected file from the input
-    const selectedFile = event.target.files[0];
+     selectedFile = event.target.files[0];
       // Check if a file is selected
    if (selectedFile) {
      const maxSizeInBytes = 4 * 1024 * 1024; // 4 MB
@@ -299,18 +243,20 @@ let selectedFile;
   }
 
 
-  // Event listener to close modal when clicking outside
- window.addEventListener('click', (event) => {
-  const myModal = document.getElementById('myModal');
-  const secondModal = document.getElementById('secondModal');
-  // Check if 'myModal' exists and if the click event target is 'myModal' or is contained within 'myModal'
-  if (myModal && (event.target === myModal || myModal.contains(event.target))) {
-    closeModalFunction(myModal);
-  } else if (secondModal && (event.target === secondModal || secondModal.contains(event.target))) {
-    // If 'myModal' is not clicked, check 'secondModal' in the same way and hide it if necessary
-    closeModalFunction(secondModal);
-  }
-});
+
+
+  // Event listener to close modal when clicking outside of it
+  window.addEventListener('click', (event) => {
+    const myModal = document.getElementById('myModal');
+    const secondModal = document.getElementById('secondModal');
+    if (myModal && (event.target === myModal || myModal.contains(event.target))) {
+      closeModalFunction(myModal);
+      } else if (secondModal && event.target === secondModal) {
+      closeModalFunction(secondModal);
+    }
+  });
+
+
   // Function to close the modal
     function closeModalFunction() {
   // Get a reference to the modal element with the ID 'myModal'
@@ -321,19 +267,11 @@ let selectedFile;
     modal.style.display = 'none';
     }
   }
-
-
-
-
   // Function to show the top bar if the user is logged in
     function showTopBar() {
     const topBar = document.querySelector('.topbar');
     topBar.classList.remove('hidden');
   }
-
-
-
-
  //Function to display the selected photo in the second modal
   function displaySelectedPhoto(file) {
   //  const photoContainer = document.getElementById('photoContainer');
@@ -362,10 +300,6 @@ let selectedFile;
    });
    // Get a reference to the close icon
 const closeIcon = document.querySelector('.fa.fa-times.close-icon');
-
-
-
-
 // Add a click event listener to the close icon
   closeIcon.addEventListener('click', function() {
   // Remove the displayed image
@@ -377,10 +311,6 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
   closeIconContainer.style.display = 'none';
   // Clear the file input value
   buttonAddPhoto.value = '';
-
-
-
-
   // Show the labels
   const labels = document.querySelectorAll(
     'label[for="buttonAddPhoto"], label#buttonAddPhotoAspect, label.pictureFormat'
@@ -402,10 +332,6 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` },
     });
-
-
-
-
     if (response.ok) {
       console.log('Project deleted successfully.');
       // Remove the image container from the DOM
@@ -419,57 +345,7 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
  }  
 
 
- // Function to handle form submission for adding a new project
-async function handleAddProjectFormSubmit() {
-    console.log('Button clicked');
-    // Get form elements and values
-    const titleInput = document.getElementById('titleInput').value;
-    const categoryInput = document.getElementById('categoryInput').value;
-    const imageInput = document.getElementById('buttonAddPhoto').files[0];
-    const token = localStorage.getItem('authToken');
-    // Validate form input
-    if (!titleInput || categoryInput === 'default' || !imageInput) {
-      // Display an error message if any required fields are missing
-      const error2 = document.querySelector('.error2');
-      error2.textContent = 'Please fill in all required fields.';
-      return;
-    }
  
-    // Create a FormData object to send form data
-    const formData = new FormData();
-    formData.append('title', titleInput);
-    formData.append('category', categoryInput);
-    formData.append('image', imageInput);
-    console.log('Before fetch request');
-    // Send a POST request to the API to add the new project
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`, // Assuming you have a valid token
-        },
-        body: formData,
-      });
-      console.log('API Response:', response);
-      if (response.ok) {
-        // Project added successfully, update the gallery
-        fetchAndPopulateGallery();
-        closeModalFunction(); // Close the modal
-      } else {
-        // Handle the case where the API returns an error
-        console.error('Error adding project:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error adding project:', error);
-    }
-    console.log('After fetch request');
-  }
- 
-  // Add an event listener to the "Valider" button for form submission
-  const buttonModalSubmit = document.getElementById('buttonModalSubmit');
-  buttonModalSubmit.addEventListener('click', handleAddProjectFormSubmit);
-
-
 document.addEventListener('DOMContentLoaded', async () => {
     const loginButton = document.getElementById('login-button');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -520,4 +396,109 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = './login.html';
       });
     }
+
+
+    // Function to add a photo
+ function addPhoto() {
+  // Get a reference to the file input element
+  const photoInput = document.getElementById('buttonAddPhoto');
+  // Add an event listener to the file input element for the 'change' event
+    photoInput.addEventListener('change', (event) => {
+  // Get the selected file from the file input
+      const selectedFile = event.target.files[0];
+  // Check if a file is selected
+    if (selectedFile) {
+  // Create an 'img' element to display the selected image
+      const img = document.createElement('img');
+      // Set the image source
+      img.src = URL.createObjectURL(selectedFile);
+      // Set the alt attribute for accessibility
+      img.alt = 'Selected Image';
+      // Add a CSS class to the image for styling
+      img.classList.add('modal-image');    
+   // Get a reference to the photo container element
+      const photoContainer = document.getElementById('photoContainer');
+   // Clear the contents of the photo container
+      photoContainer.innerHTML = '';
+   // Append the created 'img' element to the photo container
+      photoContainer.appendChild(img);
+   // Call a function to hide labels and text
+      hideLabelsAndText();
+    }
   });
+}
+// Event listener for adding a photo
+const addPhotoButton = document.querySelector('#buttonAddPhotoAspect');
+addPhotoButton.addEventListener('click', addPhoto);
+
+
+  // Add an event listener to the "Valider" button for form submission
+  console.log('Adding event listener to Valider button');
+    const buttonModalSubmit = document.getElementById('buttonModalSubmit');
+    buttonModalSubmit.addEventListener('click', handleAddProjectFormSubmit);
+
+
+    async function handleAddProjectFormSubmit() {
+      console.log('Button clicked!');
+
+      const titleInput = document.getElementById('titleInput').value;
+      const categoryInput = document.getElementById('categoryInput').value;
+      const imageInput = document.getElementById('buttonAddPhoto').files[0];
+      const token = localStorage.getItem('authToken');
+
+      console.log('Title Input:', titleInput);
+      console.log('Category Input:', categoryInput);
+      console.log('Image Input:', selectedFile);
+   
+      if (!titleInput || categoryInput === 'default' || !imageInput) {
+        const error2 = document.querySelector('.error2');
+        error2.textContent = 'Please fill in all required fields.';
+        return;
+      }
+   
+      const formData = new FormData();
+      formData.append('title', titleInput);
+      formData.append('category', categoryInput);
+      formData.append('image', imageInput);
+
+      console.log('Before fetch');
+      try {
+        // console.log('Before fetch');
+        const response = await fetch('http://localhost:5678/api/works', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+
+        console.log('API Response:', response);    
+        if (response.ok) {
+          buttonAddPhoto.value = '';
+          // Add the uploaded image to the gallery
+          const viewPicture = document.getElementById('viewPicture');
+          const selectedImage = viewPicture.querySelector('img');    
+          if (selectedImage) {
+            const clonedImage = selectedImage.cloneNode(true);
+            console.log('Cloned image:', clonedImage);
+            const gallery = document.querySelector('.gallery');
+            gallery.appendChild(clonedImage);
+            console.log('Image added to gallery:', clonedImage);
+
+             // Call populateGallery again with the updated list of projects
+               const updatedProjects = await fetchData(apiUrl);
+                 populateGallery(updatedProjects);
+          }
+          closeSecondModal();
+        } else {
+          console.error('Error adding project:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error adding project:', error);
+      }
+    }
+  });
+
+
+
