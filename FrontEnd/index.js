@@ -1,11 +1,9 @@
 // Define API URLs
 const apiUrl = 'http://localhost:5678/api/works';
 const apiCategoriesUrl = 'http://localhost:5678/api/categories';
-// Select the element to display works
-const galleryContainer = document.querySelector('.gallery');
-// Select the category menu
-const categoryMenu = document.querySelector('.categories');
-// Function to fetch data from the API
+
+
+// **********Function to fetch data from the API********
 async function fetchData(apiUrl) {
   try {
     // Make an API request
@@ -28,7 +26,9 @@ async function fetchData(apiUrl) {
     throw error;
   }
 }
-// Function to fetch categories from the API
+
+
+// ********Function to fetch categories from the API********
 async function fetchCategories(apiUrl) {
   try {
     // Make an API request to fetch categories
@@ -49,239 +49,212 @@ async function fetchCategories(apiUrl) {
     throw error;
   }
 }
-// Function to populate the category menu
-function populateCategoryMenu(categoriesData) {
-  // Create an option for showing all works
-  const liAll = document.createElement('li');
-  // Set the text content of the "All" category option to "Tous les travaux"
-  liAll.textContent = 'Tous les travaux';
-  // Set a custom attribute to represent all categories
-  liAll.dataset.categoryId = 'all';
-  // Append the "All" category option to the category menu
-  categoryMenu.appendChild(liAll);
- // Populate the menu with categories from the data
-  categoriesData.forEach(category => {
- // Reusing the same variable name for simplicity
-  const liCategory = document.createElement('li');
- // Use the category name as the option text
-    liCategory.textContent = category.name;
-    // Set a custom attribute to represent the category ID
-    liCategory.dataset.categoryId = category.id;
-    // Append the category option to the category menu
-    categoryMenu.appendChild(liCategory);
+
+
+//********** Function to populate the gallery with projects************
+function populateGallery(projects) {
+  // Get the gallery element from the DOM
+  const gallery = document.querySelector('.gallery');
+  // Clear the gallery content
+  gallery.innerHTML = '';
+  // Loop through each project and create elements for display
+  projects.forEach((project) => {
+    const figure = document.createElement('figure');
+    const img = document.createElement('img');
+    // Set the image source/URL
+    img.src = project.imageUrl;
+    img.alt = project.title;
+    // Set a data attribute for the project ID
+    img.setAttribute('data-id', project.id);
+    const figcaption = document.createElement('figcaption');
+    // Set the title in the caption
+    figcaption.textContent = project.title;
+    figure.appendChild(img);// Append the image to the figure element
+    figure.appendChild(figcaption);// Append the caption to the figure element
+    gallery.appendChild(figure);// Append the figure to the gallery
   });
-  // Add an event listener to the category menu to handle filtering
-  categoryMenu.addEventListener('click', handleCategoryFilter);
 }
-// Function to populate the gallery with projects
- function populateGallery(projects) {
-   // Get the gallery element from the DOM
-   const gallery = document.querySelector('.gallery');
-   // Clear the gallery content
-   gallery.innerHTML = '';
-   // Loop through each project and create elements for display
-   projects.forEach((project) => {
-     const figure = document.createElement('figure');
-     const img = document.createElement('img');
-     // Set the image source/URL
-     img.src = project.imageUrl;
-     img.alt = project.title;
-     // Set a data attribute for the project ID
-     img.setAttribute('data-id', project.id);
-     console.log('Project ID:', project.id);
-     const figcaption = document.createElement('figcaption');
-     // Set the title in the caption
-     figcaption.textContent = project.title;
-     figure.appendChild(img);// Append the image to the figure element
-     figure.appendChild(figcaption);// Append the caption to the figure element
-     gallery.appendChild(figure);// Append the figure to the gallery
-   });
- }
- // Define an async function to fetch data and populate the gallery
+
+
+//************ Define an async function to fetch data and populate the gallery***********
 async function fetchAndPopulateGallery() {
-    try {
-      // Fetch works data
-      const projects = await fetchData(apiUrl);
-      console.log('Fetched projects:', projects);
-      // Create Category Filters
-      const categories = await fetchCategories(apiCategoriesUrl);
-      console.log('Fetched categories:', categories);
-      populateGallery(projects);
-      // Create a category menu for filtering projects
-      const categoriesMenu = document.querySelector('.categories');
-      const liAll = document.createElement('li');
-      liAll.textContent = 'All';
-      liAll.setAttribute('data-category', 'all');
-      categoriesMenu.appendChild(liAll);
-      // Create list items for each category
-      categories.forEach((category) => {
-        const li = document.createElement('li');
-        li.textContent = category.name;
-        li.setAttribute('data-category', category.id);
-        categoriesMenu.appendChild(li);
+  try {
+        const projects = await fetchData(apiUrl);// Fetch works data
+    // Create Category Filters
+    const categories = await fetchCategories(apiCategoriesUrl);
+    populateGallery(projects);
+    // Create a category menu for filtering projects
+    const categoriesMenu = document.querySelector('.categories');
+    const liAll = document.createElement('li');
+    liAll.textContent = 'All';
+    liAll.setAttribute('data-category', 'all');
+    categoriesMenu.appendChild(liAll);
+    // Create list items for each category
+    categories.forEach((category) => {
+      const li = document.createElement('li');
+      li.textContent = category.name;
+      li.setAttribute('data-category', category.id);
+      categoriesMenu.appendChild(li);
+  });
+  // Add click event listeners to category items for filtering
+  const categoryItems = document.querySelectorAll('.categories li');
+  categoryItems.forEach((item) => {
+    item.addEventListener('click', async () => {
+      const selectedCategory = item.getAttribute('data-category');
+      if (selectedCategory === 'all') {
+        // Display all projects when "All" is selected
+        populateGallery(projects);
+      } else {
+        // Display projects filtered by category
+        const filteredProjects = projects.filter(
+          (project) => project.categoryId === parseInt(selectedCategory)
+        );
+        populateGallery(filteredProjects);
+      }
     });
-    // Add click event listeners to category items for filtering
-    const categoryItems = document.querySelectorAll('.categories li');
-    categoryItems.forEach((item) => {
-      item.addEventListener('click', async () => {
-        const selectedCategory = item.getAttribute('data-category');
-        if (selectedCategory === 'all') {
-          // Display all projects when "All" is selected
-          populateGallery(projects);
-        } else {
-          // Display projects filtered by category
-          const filteredProjects = projects.filter(
-            (project) => project.categoryId === parseInt(selectedCategory)
-          );
-          populateGallery(filteredProjects);
-        }
-      });
-    });
-  } catch (error) {
-    console.error('Error initializing the app:', error);
-  }
+  });
+} catch (error) {
+  console.error('Error initializing the app:', error);
 }
-// Call the async function to start the process
-fetchAndPopulateGallery();
+}
+fetchAndPopulateGallery();  // Call the async function to start the process
 
 
-let selectedFile;
-  // Function to handle file input change
- function handleFileInputChange(event) {
-   // Get the file input element
-    const fileInput = event.target;
-   // Get the first selected file from the input
-     selectedFile = event.target.files[0];
-      // Check if a file is selected
-   if (selectedFile) {
-     const maxSizeInBytes = 4 * 1024 * 1024; // 4 MB
-         // Check if the selected image is too large
-     if (selectedFile.size > maxSizeInBytes) {
-       alert('Selected image is too large. Please choose a smaller image.');
-       fileInput.value = '';
-     } else {
-       // Display the selected photo
-       displaySelectedPhoto(selectedFile);
-            }
-   }else{
-     console.error('no file selected');
-   }
- }
- // Function to show the edit icon and modal
- function showEditIconAndModal() {
-    const openModalIcon = document.getElementById('openModalIcon');
-    const editIcon = document.getElementById('editIcon');
-    const modal = document.getElementById('myModal');
-    const closeModal = document.getElementById('closeModal');
-    const modalImageContainer = document.getElementById('modalImageContainer');
-  // Function to open the modal and populate it with gallery images
-    function openModal() {
-      modal.style.display = 'block';
-      modalImageContainer.innerHTML = '';
- 
-      const galleryImages = document.querySelectorAll('.gallery img');
-      galleryImages.forEach((image, index) => {
-        const clonedImage = image.cloneNode(true);
- 
-        clonedImage.style.width = '76px';
-        clonedImage.style.height = '102px';
- 
-        if (index < galleryImages.length - 1) {
-          clonedImage.style.marginRight = '10px';
-        }
+ // ***********Function to show the edit icon and modal********
+function showEditIconAndModal() {
+  const openModalIcon = document.getElementById('openModalIcon');
+  const editIcon = document.getElementById('editIcon');
+  const closeModal = document.getElementById('closeModal');
+  const openSecondModalButton = document.getElementById('openSecondModal');
+  const closeSecondModalButton = document.getElementById('closeSecondModal');
+  const backArrowIcon = document.getElementById('backArrowIcon');
+  const myModal = document.getElementById('myModal');
+  const secondModal = document.getElementById('secondModal');
+  const modalImageContainer = document.getElementById('modalImageContainer');
+
+
+
+
+  function openModal() {// Function to open the first modal
+    myModal.style.display = 'block';
+    modalImageContainer.innerHTML = '';
+
+
+
+
+    const galleryImages = document.querySelectorAll('.gallery img');
+    galleryImages.forEach((image, index) => {
+      const clonedImage = image.cloneNode(true);
+      clonedImage.style.width = '76px';
+      clonedImage.style.height = '102px';
+
+
+
+
+      if (index < galleryImages.length - 1) {
+        clonedImage.style.marginRight = '10px';
+      }
    // Create a container for each image with delete and edit options
-        const imageContainer = document.createElement('div');
-        imageContainer.classList.add('image-container');
-        const projectId = image.getAttribute('data-id');
-        imageContainer.setAttribute('data-id', projectId);
-        imageContainer.appendChild(clonedImage);
+      const imageContainer = document.createElement('div');
+      imageContainer.classList.add('image-container');
+      const projectId = image.getAttribute('data-id');
+      imageContainer.setAttribute('data-id', projectId);
+      imageContainer.appendChild(clonedImage);
   // Create a delete icon
-        const deleteIcon = document.createElement('i');
-        deleteIcon.classList.add('delete-icon', 'fa', 'fa-trash');
-        imageContainer.appendChild(deleteIcon);
+      const deleteIcon = document.createElement('i');
+      deleteIcon.classList.add('delete-icon', 'fa', 'fa-trash');
+      imageContainer.appendChild(deleteIcon);
   // Create an "éditer" text element
-        const editText = document.createElement('p');
-        editText.textContent = 'éditer';
-        imageContainer.appendChild(editText);
+      const editText = document.createElement('p');
+      editText.textContent = 'éditer';
+      imageContainer.appendChild(editText);
       // Add the container to the modal
-        modalImageContainer.appendChild(imageContainer);
-      });
+      modalImageContainer.appendChild(imageContainer);
+    });
   // Add click event listeners to delete icons
-      const deleteIcons = document.querySelectorAll('.delete-icon');
-      deleteIcons.forEach((deleteIcon) => {
-        deleteIcon.addEventListener('click', handleDeleteIconClick);
-      });
-     }
-  // Add event listeners for opening the modal
-    openModalIcon.addEventListener('click', openModal);
-    editIcon.addEventListener('click', openModal);
-    // Add event listener for closing the modal
-    closeModal.addEventListener('click', closeModalFunction);
- 
-    // Function to open the second modal
-    function openSecondModal() {
-      const secondModal = document.getElementById('secondModal');
-      secondModal.style.display = 'block';
-      const firstModal = document.getElementById('myModal');
-      firstModal.style.display = 'none';
-    }
-    // Function to close the second modal
-    function closeSecondModal() {
-      const secondModal = document.getElementById('secondModal');
-      secondModal.style.display = 'none';
-      const firstModal = document.getElementById('myModal');
-      firstModal.style.display = 'block';
-    }
-  // Add event listeners for opening and closing the second modal
-    const openSecondModalButton = document.getElementById('openSecondModal');
-    openSecondModalButton.addEventListener('click', openSecondModal);
-    const closeSecondModalButton = document.getElementById('closeSecondModal');
-    closeSecondModalButton.addEventListener('click', closeSecondModal);
-  // Add event listener for clicking the back arrow icon to close the second modal
-    const backArrowIcon = document.getElementById('backArrowIcon');
-    backArrowIcon.addEventListener('click', closeSecondModal);
+    const deleteIcons = document.querySelectorAll('.delete-icon');
+    deleteIcons.forEach((deleteIcon) => {
+      deleteIcon.addEventListener('click', handleDeleteIconClick);
+    });
   }
 
 
+  function openSecondModal() {// Function to open the second modal
+    secondModal.style.display = 'block';
+    myModal.style.display = 'none';
+  }
 
 
+  function closeSecondModal() { // Function to close the second modal
+    secondModal.style.display = 'none';
+    myModal.style.display = 'block';
+  }
+  // Add event listeners for opening,backarrow and closing the second modal
+  openModalIcon.addEventListener('click', openModal);
+  editIcon.addEventListener('click', openModal);
+  closeModal.addEventListener('click', () => closeModalFunction(myModal));
+  openSecondModalButton.addEventListener('click', openSecondModal);
+  closeSecondModalButton.addEventListener('click', closeSecondModal);
+  backArrowIcon.addEventListener('click', closeSecondModal);
   // Event listener to close modal when clicking outside of it
   window.addEventListener('click', (event) => {
-    const myModal = document.getElementById('myModal');
-    const secondModal = document.getElementById('secondModal');
     if (myModal && (event.target === myModal || myModal.contains(event.target))) {
       closeModalFunction(myModal);
-      } else if (secondModal && event.target === secondModal) {
+    } else if (secondModal && event.target === secondModal) {
       closeModalFunction(secondModal);
     }
   });
 
 
-  // Function to close the modal
-    function closeModalFunction() {
-  // Get a reference to the modal element with the ID 'myModal'
-    const modal = document.getElementById('myModal');
-  // If the modal element is found
+
+
+  function closeModalFunction(modal) {//Function to close the modal
     if (modal) {
-  // Set the 'display'  to 'none' to hide the modal
-    modal.style.display = 'none';
+      modal.style.display = 'none';
     }
   }
-  // Function to show the top bar if the user is logged in
-    function showTopBar() {
-    const topBar = document.querySelector('.topbar');
-    topBar.classList.remove('hidden');
+}
+// Call the setupModals function to set up modal functionality
+showEditIconAndModal();
+
+  // ***********Function to handle file input change***********
+   function handleFileInputChange(event) {
+    // Get the file input element
+   const fileInput = event.target;  
+   const selectedFile = event.target.files[0];  // Get the first selected file from the input
+   console.log('File Input:', fileInput);
+   console.log('Selected File:', selectedFile);
+     // Check if a file is selected
+  if (selectedFile) {
+       const maxSizeInBytes = 4 * 1024 * 1024; // 4 MB
+        // Check if the selected image is too large
+    if (selectedFile.size > maxSizeInBytes) {
+      alert('Selected image is too large. Please choose a smaller image.');
+      fileInput.value = '';
+    } else {
+      // Display the selected photo
+      displaySelectedPhoto(selectedFile);
+           }
+  }else{
+    console.error('no file selected');
   }
- //Function to display the selected photo in the second modal
-  function displaySelectedPhoto(file) {
+}
+// Event listener for the file input
+const buttonAddPhoto = document.getElementById('buttonAddPhoto');
+buttonAddPhoto.addEventListener('change', handleFileInputChange);
+
+//********Function to display the selected photo in the second modal*********
+function displaySelectedPhoto(file) {
   //  const photoContainer = document.getElementById('photoContainer');
    const viewPicture = document.getElementById('viewPicture');
    const closeIconContainer = document.getElementById('closeIconContainer');
-    // Create an image element to display the selected file
+   
+   // Create an image element to display the selected file
     const photoElement = document.createElement('img');
     // Set the source of the image to the selected file
     photoElement.src = URL.createObjectURL(file);
-     // Clear and update the viewPicture container with the selected image
+     
+    // Clear and update the viewPicture container with the selected image
     viewPicture.innerHTML = '';
     viewPicture.appendChild(photoElement);
    // Clear the file input value
@@ -311,16 +284,17 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
   closeIconContainer.style.display = 'none';
   // Clear the file input value
   buttonAddPhoto.value = '';
+   
   // Show the labels
   const labels = document.querySelectorAll(
     'label[for="buttonAddPhoto"], label#buttonAddPhotoAspect, label.pictureFormat'
   );
   labels.forEach((label) => {
-    label.style.display = 'block';
+    label.style.display = 'block';    
   });
  });
 }
-  // Function to handle delete icon click
+//********** Function to handle delete icon click***********
   async function handleDeleteIconClick(event) {
   event.preventDefault();
   const imageContainer = event.target.parentElement;
@@ -343,10 +317,8 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
     console.error('Error deleting project:', error);
   }
  }  
-
-
- 
-document.addEventListener('DOMContentLoaded', async () => {
+ document.addEventListener('DOMContentLoaded', async () => {
+  //***********Function for login ***********
     const loginButton = document.getElementById('login-button');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     const photoInput = document.getElementById('buttonAddPhoto');
@@ -355,16 +327,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isLoggedIn) {
       // User is logged in, update UI accordingly
       loginButton.textContent = 'Logout';
- 
       // Hide the main navigation bar
       const navBar = document.querySelector('.main-nav');
       navBar.style.display = 'none';
- 
       // Show the top bar
-      showTopBar();
- 
+        const topBar = document.querySelector('.topbar');
+      topBar.classList.remove('hidden');
       // Show the edit icon and modal for logged-in users
-      showEditIconAndModal();
+       showEditIconAndModal();
  
       // Show the "modifierText" and "modifierText2" elements
       const modifierText = document.getElementById('modifierText');
@@ -396,61 +366,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = './login.html';
       });
     }
-
-
-    // Function to add a photo
- function addPhoto() {
-  // Get a reference to the file input element
-  const photoInput = document.getElementById('buttonAddPhoto');
-  // Add an event listener to the file input element for the 'change' event
-    photoInput.addEventListener('change', (event) => {
-  // Get the selected file from the file input
-      const selectedFile = event.target.files[0];
-  // Check if a file is selected
-    if (selectedFile) {
-  // Create an 'img' element to display the selected image
-      const img = document.createElement('img');
-      // Set the image source
-      img.src = URL.createObjectURL(selectedFile);
-      // Set the alt attribute for accessibility
-      img.alt = 'Selected Image';
-      // Add a CSS class to the image for styling
-      img.classList.add('modal-image');    
-   // Get a reference to the photo container element
-      const photoContainer = document.getElementById('photoContainer');
-   // Clear the contents of the photo container
-      photoContainer.innerHTML = '';
-   // Append the created 'img' element to the photo container
-      photoContainer.appendChild(img);
-   // Call a function to hide labels and text
-      hideLabelsAndText();
-    }
-  });
-}
-// Event listener for adding a photo
-const addPhotoButton = document.querySelector('#buttonAddPhotoAspect');
-addPhotoButton.addEventListener('click', addPhoto);
-
-
-  // Add an event listener to the "Valider" button for form submission
-  console.log('Adding event listener to Valider button');
+    //********Function to submit form ********
     const buttonModalSubmit = document.getElementById('buttonModalSubmit');
     buttonModalSubmit.addEventListener('click', handleAddProjectFormSubmit);
 
-
     async function handleAddProjectFormSubmit() {
       console.log('Button clicked!');
-
       const titleInput = document.getElementById('titleInput').value;
       const categoryInput = document.getElementById('categoryInput').value;
-      const imageInput = document.getElementById('buttonAddPhoto').files[0];
+      const selectedFile = document.getElementById('buttonAddPhoto').files[0]; // Get the selected file
       const token = localStorage.getItem('authToken');
-
+   
       console.log('Title Input:', titleInput);
       console.log('Category Input:', categoryInput);
       console.log('Image Input:', selectedFile);
    
-      if (!titleInput || categoryInput === 'default' || !imageInput) {
+      if (!titleInput || categoryInput === 'default') {
         const error2 = document.querySelector('.error2');
         error2.textContent = 'Please fill in all required fields.';
         return;
@@ -459,11 +390,10 @@ addPhotoButton.addEventListener('click', addPhoto);
       const formData = new FormData();
       formData.append('title', titleInput);
       formData.append('category', categoryInput);
-      formData.append('image', imageInput);
-
-      console.log('Before fetch');
+      formData.append('image', selectedFile);
+   
       try {
-        // console.log('Before fetch');
+        console.log('Before fetch');
         const response = await fetch('http://localhost:5678/api/works', {
           method: 'POST',
           headers: {
@@ -471,24 +401,27 @@ addPhotoButton.addEventListener('click', addPhoto);
           },
           body: formData,
         });
-
-
-        console.log('API Response:', response);    
+   
+        console.log('Response Status:', response.status); // Log response status code
+   
+        const responseData = await response.json(); // Parse JSON response data
+        console.log('Response Data:', responseData); // Log response data
+   
         if (response.ok) {
           buttonAddPhoto.value = '';
-          // Add the uploaded image to the gallery
+          console.log('Before cloning image');
           const viewPicture = document.getElementById('viewPicture');
-          const selectedImage = viewPicture.querySelector('img');    
+          const selectedImage = viewPicture.querySelector('img');
           if (selectedImage) {
             const clonedImage = selectedImage.cloneNode(true);
             console.log('Cloned image:', clonedImage);
             const gallery = document.querySelector('.gallery');
             gallery.appendChild(clonedImage);
             console.log('Image added to gallery:', clonedImage);
-
-             // Call populateGallery again with the updated list of projects
-               const updatedProjects = await fetchData(apiUrl);
-                 populateGallery(updatedProjects);
+   
+            // Call populateGallery again with the updated list of projects
+            const updatedProjects = await fetchData(apiUrl);
+            populateGallery(updatedProjects);
           }
           closeSecondModal();
         } else {
@@ -497,8 +430,5 @@ addPhotoButton.addEventListener('click', addPhoto);
       } catch (error) {
         console.error('Error adding project:', error);
       }
-    }
-  });
-
-
-
+    } 
+ }); 

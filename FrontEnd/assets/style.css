@@ -62,8 +62,6 @@ header {
 section {
     margin: 50px 0
 }
-
-
 h1{
     display: flex;
     flex-direction: column;
@@ -72,24 +70,18 @@ h1{
     font-weight: 800;
     color: #B1663C
 }
-
-
 h1 > span {
     font-family: 'Work Sans';
     font-size:10px;
     letter-spacing: 0.1em;
 ;
 }
-
-
 h2{
     font-family: 'Syne';
     font-weight: 700;
     font-size: 30px;
     color: #1D6154
 }
-
-
 nav ul {
     display: flex;
     align-items: center;
@@ -99,8 +91,6 @@ nav li {
     padding: 0 10px;
     font-size: 1.2em;
 }
-
-
 li:hover {
     color: #B1663C;
 }
@@ -122,13 +112,9 @@ li:hover {
     flex-direction: column; /* Stack elements vertically */
    
 }
-
-
 .intro-figure img {
     margin-bottom: 10px;
 }
-
-
 /* Style for the edit icon */
 #openModalIcon {
     font-size: 20px;
@@ -377,8 +363,6 @@ li:hover {
     /* margin-top: 30px; */
     margin-bottom: 30px;
 }
-
-
 #buttonAddPhotoAspect {
     width: 173px;
     height: 36px;
