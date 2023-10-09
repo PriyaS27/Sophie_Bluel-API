@@ -2,7 +2,6 @@
 const apiUrl = 'http://localhost:5678/api/works';
 const apiCategoriesUrl = 'http://localhost:5678/api/categories';
 
-
 // **********Function to fetch data from the API********
 async function fetchData(apiUrl) {
   try {
@@ -27,7 +26,6 @@ async function fetchData(apiUrl) {
   }
 }
 
-
 // ********Function to fetch categories from the API********
 async function fetchCategories(apiUrl) {
   try {
@@ -49,7 +47,6 @@ async function fetchCategories(apiUrl) {
     throw error;
   }
 }
-
 
 //********** Function to populate the gallery with projects************
 function populateGallery(projects) {
@@ -74,7 +71,6 @@ function populateGallery(projects) {
     gallery.appendChild(figure);// Append the figure to the gallery
   });
 }
-
 
 //************ Define an async function to fetch data and populate the gallery***********
 async function fetchAndPopulateGallery() {
@@ -119,7 +115,6 @@ async function fetchAndPopulateGallery() {
 }
 fetchAndPopulateGallery();  // Call the async function to start the process
 
-
  // ***********Function to show the edit icon and modal********
 function showEditIconAndModal() {
   const openModalIcon = document.getElementById('openModalIcon');
@@ -131,26 +126,15 @@ function showEditIconAndModal() {
   const myModal = document.getElementById('myModal');
   const secondModal = document.getElementById('secondModal');
   const modalImageContainer = document.getElementById('modalImageContainer');
-
-
-
-
-  function openModal() {// Function to open the first modal
+  //********Function to open the first modal********
+  function openModal() {
     myModal.style.display = 'block';
     modalImageContainer.innerHTML = '';
-
-
-
-
     const galleryImages = document.querySelectorAll('.gallery img');
     galleryImages.forEach((image, index) => {
       const clonedImage = image.cloneNode(true);
       clonedImage.style.width = '76px';
       clonedImage.style.height = '102px';
-
-
-
-
       if (index < galleryImages.length - 1) {
         clonedImage.style.marginRight = '10px';
       }
@@ -177,15 +161,13 @@ function showEditIconAndModal() {
       deleteIcon.addEventListener('click', handleDeleteIconClick);
     });
   }
-
-
-  function openSecondModal() {// Function to open the second modal
+  //******** Function to open the second modal*******
+  function openSecondModal() {
     secondModal.style.display = 'block';
     myModal.style.display = 'none';
   }
-
-
-  function closeSecondModal() { // Function to close the second modal
+ //******** Function to close the second modal ******
+  function closeSecondModal() { 
     secondModal.style.display = 'none';
     myModal.style.display = 'block';
   }
@@ -204,10 +186,6 @@ function showEditIconAndModal() {
       closeModalFunction(secondModal);
     }
   });
-
-
-
-
   function closeModalFunction(modal) {//Function to close the modal
     if (modal) {
       modal.style.display = 'none';
@@ -252,18 +230,15 @@ function displaySelectedPhoto(file) {
    // Create an image element to display the selected file
     const photoElement = document.createElement('img');
     // Set the source of the image to the selected file
-    photoElement.src = URL.createObjectURL(file);
-     
+    photoElement.src = URL.createObjectURL(file);     
     // Clear and update the viewPicture container with the selected image
     viewPicture.innerHTML = '';
     viewPicture.appendChild(photoElement);
-   // Clear the file input value
-   buttonAddPhoto.value = '';
-   // Display the close icon container
-   closeIconContainer.style.display = 'block';
+    // Display the close icon container
+     closeIconContainer.style.display = 'block';
    // Hide any error messages
-   const error2 = document.querySelector('.error2');
-   error2.style.display = 'none';
+     const error2 = document.querySelector('.error2');
+     error2.style.display = 'none';
    // Hide certain labels
    const labels = document.querySelectorAll(
      'label[for="buttonAddPhoto"], label#buttonAddPhotoAspect, label.pictureFormat'
@@ -385,13 +360,11 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
         const error2 = document.querySelector('.error2');
         error2.textContent = 'Please fill in all required fields.';
         return;
-      }
-   
+      }   
       const formData = new FormData();
       formData.append('title', titleInput);
       formData.append('category', categoryInput);
-      formData.append('image', selectedFile);
-   
+      formData.append('image', selectedFile);   
       try {
         console.log('Before fetch');
         const response = await fetch('http://localhost:5678/api/works', {
@@ -400,13 +373,10 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
             'Authorization': `Bearer ${token}`,
           },
           body: formData,
-        });
-   
-        console.log('Response Status:', response.status); // Log response status code
-   
+        });   
+        console.log('Response Status:', response.status); // Log response status code   
         const responseData = await response.json(); // Parse JSON response data
-        console.log('Response Data:', responseData); // Log response data
-   
+        console.log('Response Data:', responseData); // Log response data   
         if (response.ok) {
           buttonAddPhoto.value = '';
           console.log('Before cloning image');
@@ -417,8 +387,7 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
             console.log('Cloned image:', clonedImage);
             const gallery = document.querySelector('.gallery');
             gallery.appendChild(clonedImage);
-            console.log('Image added to gallery:', clonedImage);
-   
+            console.log('Image added to gallery:', clonedImage);   
             // Call populateGallery again with the updated list of projects
             const updatedProjects = await fetchData(apiUrl);
             populateGallery(updatedProjects);
