@@ -119,6 +119,8 @@ fetchAndPopulateGallery();  // Call the async function to start the process
 function showEditIconAndModal() {
   const openModalIcon = document.getElementById('openModalIcon');
   const editIcon = document.getElementById('editIcon');
+  const modifierText = document.getElementById('modifierText');
+  const modifierText2 = document.getElementById('modifierText2');
   const closeModal = document.getElementById('closeModal');
   const openSecondModalButton = document.getElementById('openSecondModal');
   const closeSecondModalButton = document.getElementById('closeSecondModal');
@@ -174,23 +176,26 @@ function showEditIconAndModal() {
   // Add event listeners for opening,backarrow and closing the second modal
   openModalIcon.addEventListener('click', openModal);
   editIcon.addEventListener('click', openModal);
+  modifierText.addEventListener('click', openModal);
+  modifierText2.addEventListener('click', openModal);
   closeModal.addEventListener('click', () => closeModalFunction(myModal));
   openSecondModalButton.addEventListener('click', openSecondModal);
   closeSecondModalButton.addEventListener('click', closeSecondModal);
   backArrowIcon.addEventListener('click', closeSecondModal);
-  // Event listener to close modal when clicking outside of it
+ // Event listener to close modal when clicking outside of it
   window.addEventListener('click', (event) => {
     if (myModal && (event.target === myModal || myModal.contains(event.target))) {
       closeModalFunction(myModal);
     } else if (secondModal && event.target === secondModal) {
       closeModalFunction(secondModal);
-    }
+    }    
   });
   function closeModalFunction(modal) {//Function to close the modal
     if (modal) {
       modal.style.display = 'none';
     }
   }
+  
 }
 // Call the setupModals function to set up modal functionality
 showEditIconAndModal();
@@ -200,10 +205,8 @@ showEditIconAndModal();
     // Get the file input element
    const fileInput = event.target;  
    const selectedFile = event.target.files[0];  // Get the first selected file from the input
-   console.log('File Input:', fileInput);
-   console.log('Selected File:', selectedFile);
-     // Check if a file is selected
-  if (selectedFile) {
+   // Check if a file is selected
+   if (selectedFile) {
        const maxSizeInBytes = 4 * 1024 * 1024; // 4 MB
         // Check if the selected image is too large
     if (selectedFile.size > maxSizeInBytes) {
@@ -346,16 +349,11 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
     buttonModalSubmit.addEventListener('click', handleAddProjectFormSubmit);
 
     async function handleAddProjectFormSubmit() {
-      console.log('Button clicked!');
       const titleInput = document.getElementById('titleInput').value;
       const categoryInput = document.getElementById('categoryInput').value;
       const selectedFile = document.getElementById('buttonAddPhoto').files[0]; // Get the selected file
       const token = localStorage.getItem('authToken');
-   
-      console.log('Title Input:', titleInput);
-      console.log('Category Input:', categoryInput);
-      console.log('Image Input:', selectedFile);
-   
+      
       if (!titleInput || categoryInput === 'default') {
         const error2 = document.querySelector('.error2');
         error2.textContent = 'Please fill in all required fields.';
@@ -366,20 +364,15 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
       formData.append('category', categoryInput);
       formData.append('image', selectedFile);   
       try {
-        console.log('Before fetch');
-        const response = await fetch('http://localhost:5678/api/works', {
+          const response = await fetch('http://localhost:5678/api/works', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
           },
           body: formData,
         });   
-        console.log('Response Status:', response.status); // Log response status code   
-        const responseData = await response.json(); // Parse JSON response data
-        console.log('Response Data:', responseData); // Log response data   
         if (response.ok) {
           buttonAddPhoto.value = '';
-          console.log('Before cloning image');
           const viewPicture = document.getElementById('viewPicture');
           const selectedImage = viewPicture.querySelector('img');
           if (selectedImage) {

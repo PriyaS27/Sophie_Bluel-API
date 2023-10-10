@@ -89,10 +89,16 @@ nav ul {
 }
 nav li {
     padding: 0 10px;
-    font-size: 1.2em;
+    font-size: 1.2em;    
+}
+#select {
+    font-weight: 600;
 }
 li:hover {
     color: #B1663C;
+}
+#passwordForgeted{
+    text-decoration: underline;
 }
 #introduction {
     display: flex;
@@ -175,10 +181,10 @@ li:hover {
 /* Style for the edit icon */
 .topbar-content .fas.fa-edit {
     font-size: 20px;
+    font-weight: 100;
     }
 /* Style for the text in the topbar */
 .topbar-content span {
-    font-weight: bold;
     font-size: 14px;
 }
 /* Style for the "Publier les changements" button */
@@ -189,9 +195,13 @@ li:hover {
     padding: 5px 15px;
     border-radius: 35px;
     cursor: pointer;
+    font-size: 14px;
 }
 .topbar-content button:hover {
   background-color: #ddd;
+}
+#modifierText, #modifierText2{
+cursor: pointer;
 }
  /* Modal Styles */
 .modal {
@@ -509,5 +519,7 @@ input[type="submit"]{
 footer nav ul {
     display: flex;
     justify-content: flex-end;
-    margin: 2em
+    margin: 6em;   
+    font-size: 14px;
+    
 }
