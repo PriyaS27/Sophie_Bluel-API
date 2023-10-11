@@ -232,6 +232,11 @@ cursor: pointer;
         overflow-y: auto;
         height: 630px;
  } 
+
+ #secondModal .error2{
+   color: red;
+    padding-top: 10px;
+ }
   .modal-content .div_line {
     border: 1px solid #B3B3B3;
     width: 85%;
@@ -493,6 +498,11 @@ cursor: pointer;
     display: flex;
     flex-direction: column;
 }
+ .error{
+    color:red;
+    font-size: 15px;
+    padding-bottom: 10px;
+ }
 #contact input ,#login input{
     height: 50px;
     font-size: 1.2em;

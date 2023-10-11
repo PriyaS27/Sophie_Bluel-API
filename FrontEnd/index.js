@@ -117,6 +117,8 @@ fetchAndPopulateGallery();  // Call the async function to start the process
 
  // ***********Function to show the edit icon and modal********
 function showEditIconAndModal() {
+  console.log('Function is running');
+
   const openModalIcon = document.getElementById('openModalIcon');
   const editIcon = document.getElementById('editIcon');
   const modifierText = document.getElementById('modifierText');
@@ -185,17 +187,21 @@ function showEditIconAndModal() {
  // Event listener to close modal when clicking outside of it
   window.addEventListener('click', (event) => {
     if (myModal && (event.target === myModal || myModal.contains(event.target))) {
+      console.log('Clicked inside myModal');
       closeModalFunction(myModal);
     } else if (secondModal && event.target === secondModal) {
+      console.log('Clicked inside secondModal');
       closeModalFunction(secondModal);
     }    
   });
   function closeModalFunction(modal) {//Function to close the modal
+    console.log('Closing modal');
     if (modal) {
       modal.style.display = 'none';
     }
   }
-  
+  closeModalFunction(myModal); // To close myModal
+closeModalFunction(secondModal); // To close secondModal
 }
 // Call the setupModals function to set up modal functionality
 showEditIconAndModal();
@@ -348,14 +354,17 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
     const buttonModalSubmit = document.getElementById('buttonModalSubmit');
     buttonModalSubmit.addEventListener('click', handleAddProjectFormSubmit);
 
-    async function handleAddProjectFormSubmit() {
+    async function handleAddProjectFormSubmit(event) {
+      event.preventDefault(); // Prevent the default form submission
+
       const titleInput = document.getElementById('titleInput').value;
       const categoryInput = document.getElementById('categoryInput').value;
       const selectedFile = document.getElementById('buttonAddPhoto').files[0]; // Get the selected file
       const token = localStorage.getItem('authToken');
+      const error2 = document.querySelector('.error2');
       
-      if (!titleInput || categoryInput === 'default') {
-        const error2 = document.querySelector('.error2');
+      if (!titleInput || categoryInput === 'default'|| !selectedFile) {
+        error2.style.display = 'block';
         error2.textContent = 'Please fill in all required fields.';
         return;
       }   
@@ -385,7 +394,9 @@ const closeIcon = document.querySelector('.fa.fa-times.close-icon');
             const updatedProjects = await fetchData(apiUrl);
             populateGallery(updatedProjects);
           }
-          closeSecondModal();
+          const closeSecondModalButton = document.getElementById('closeSecondModal');
+          closeSecondModalButton.addEventListener('click', closeSecondModal);
+
         } else {
           console.error('Error adding project:', response.statusText);
         }
